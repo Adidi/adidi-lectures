@@ -1,0 +1,175 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>Javascript Async-Generators</title>
+
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/theme/league.css">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="lib/css/zenburn.css">
+
+	<!-- Printing and PDF exports -->
+	<script>
+		var link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+		document.getElementsByTagName('head')[0].appendChild(link);
+	</script>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<p><img data-src="logo-javascript.png" alt="Javascript"></p>
+				<h2>Async <span style="color:#42affa">Generators*</span></h2>
+				<pre><code class="hljs" data-trim contenteditable>
+async function* asyncGen() {
+	yield await somePromise();
+}
+					</code></pre>
+			</section>
+			<section>
+				<p>More intuitive way working with
+					<h2 style="color:#ff2c2d">Streams</h2>
+				</p>
+			</section>
+			<section>
+				<p>What are
+					<span style="color:#ff2c2d">Streams</span>?</p>
+				<blockquote>
+					&ldquo;Streams are collections of data — just like arrays or strings. The difference is that streams might not be available
+					all at once, and they don’t have to fit in memory. This makes streams really powerful when working with large amounts
+					of data, or data that’s coming from an external source one chunk at a time.&rdquo;
+				</blockquote>
+				<a style="font-size: 20px;" href="https://medium.freecodecamp.org/node-js-streams-everything-you-need-to-know-c9141306be93">https://medium.freecodecamp.org/node-js-streams-everything-you-need-to-know-c9141306be93</a>
+			</section>
+			<section>
+				<p>
+					<span style="color:#42affa">Python</span> Stream file:</p>
+				<pre><code class="hljs">
+for chunk in open('filename'):
+	process(chunk)				
+				</code></pre>
+			</section>
+			<section>
+				<p>
+					<span style="color:#ff2c2d">Javascript</span> Stream file - Classic:</p>
+				<pre><code class="hljs">
+const readStream = fs.createReadStream(inputFilePath, 
+	{ encoding: 'utf8', highWaterMark: 1024 });
+
+readStream.on('data', (chunk) => {
+	console.log('>>> '+chunk);
+});
+
+readStream.on('end', () => {
+	console.log('### DONE ###');
+});
+					</code></pre>
+			</section>
+			<section>
+				<p>
+					<span style="color:#ff2c2d">Javascript</span> Stream file - Async Generators:</p>
+				<pre><code class="hljs">
+const readStream = fs.createReadStream(inputFilePath, 
+	{ encoding: 'utf8', highWaterMark: 1024 });
+
+for await (const chunk of readStream) {
+	yield chunk;
+}			
+					</code></pre>
+			</section>
+			<section>
+				<p>Async Generators</p>
+				<p class="fragment">&raquo; Generators</p>
+				<p class="fragment">&raquo; Iterators</p>
+			</section>
+			<section>
+				<h3>Iterators</h3>
+				<pre><code>for...of loop statement</code></pre>
+				<blockquote>
+					The for...of statement creates a loop iterating over iterable objects (including the built-in String, Array, e.g. the Array-like
+					arguments or NodeList objects, TypedArray, Map and Set, and user-defined iterables)
+				</blockquote>
+				<a style="font-size: 20px;" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of</a>
+			</section>
+			<section>
+				<h3>Symbol</h3>
+				<pre><code>
+const symbol1 = Symbol();
+const symbol2 = Symbol(42);
+const symbol3 = Symbol('foo');
+				</code></pre>
+				<blockquote>
+						The Symbol() function returns a value of type symbol, ...<br>
+						Every symbol value returned from Symbol() is unique.  A symbol value may be used as an identifier for object properties; ...
+				</blockquote>
+				<a  style="font-size: 20px;" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol</a>
+			</section>
+			<section>
+					<h3>Generators</h3>
+					<pre><code>
+function* gen() {
+	yield 1;
+	yield 2;
+	yield 3;
+};
+					</code></pre>
+					<p>Generators are only <u>Syntactic sugar</u> for iterators!</p>
+					<p>Like async funciton returns <b style="color:#42affa">promise</b>, 
+						generator returns <b style="color:#ff2c2d">iterator</b></p>
+			</section>
+			<section>
+					<h3>Async Generators</h3>
+					<pre><code>
+async function* callApi() {
+	let page = 1;
+	while (true) {
+		const result = await callMyAPI(page++);
+		yield result;
+	}
+}
+					</code></pre>
+					<blockquote style="font-size: 24px;">
+					Asynchronous iteration is an improvement over callback-based processing. It will be available in Node 10. This will allow to asynchronously iterate over readable streams. Additionally, it allows to use map() and filter() operations on asynchronous data.
+					</blockquote>
+					<a style="font-size: 20px;" href="https://zaiste.net/nodejs_10_asynchronous_iteration_async_generators/">https://zaiste.net/nodejs_10_asynchronous_iteration_async_generators/</a>
+			</section>
+			<section data-background="boker.gif" data-background-transition="zoom">
+				<h1 style="direction:rtl;">בוקר !</h1>
+			</section>
+		</div>
+	</div>
+
+	<script src="lib/js/head.min.js"></script>
+	<script src="js/reveal.js"></script>
+
+	<script>
+		// More info about config & dependencies:
+		// - https://github.com/hakimel/reveal.js#configuration
+		// - https://github.com/hakimel/reveal.js#dependencies
+		Reveal.initialize({
+			controls: true,
+			progress: true,
+			history: true,
+			center: true,
+
+			transition: 'slide', // none/fade/slide/convex/concave/zoom
+			dependencies: [
+				{ src: 'plugin/markdown/marked.js' },
+				{ src: 'plugin/markdown/markdown.js' },
+				{ src: 'plugin/notes/notes.js', async: true },
+				{ src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } }
+			]
+		});
+	</script>
+</body>
+
+</html>
